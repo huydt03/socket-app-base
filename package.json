@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/huydt03/socket-app-base/issues"
   },
-  "homepage": "https://github.com/huydt03/socket-app-base#readme"
+  "homepage": "https://github.com/huydt03/socket-app-base#readme",
+  "dependencies": {
+    "@drhuy/game-base": "^1.0.1"
+  }
 }
