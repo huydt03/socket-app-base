@@ -1,0 +1,24 @@
+{
+  "name": "@drhuy/socket-app-base",
+  "version": "1.0.0",
+  "description": "base emits {player, room, rooms}",
+  "main": "src/SocketAppBase.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huydt03/socket-app-base.git"
+  },
+  "keywords": [
+    "javascript",
+    "socket.io",
+    "game"
+  ],
+  "author": "drhuy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/huydt03/socket-app-base/issues"
+  },
+  "homepage": "https://github.com/huydt03/socket-app-base#readme"
+}
