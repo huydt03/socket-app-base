@@ -1,6 +1,6 @@
 {
   "name": "@drhuy/socket-app-base",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "base emits {player, room, rooms}",
   "main": "src/SocketAppBase.js",
   "scripts": {
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/huydt03/socket-app-base#readme",
   "dependencies": {
-    "@drhuy/game-base": "^1.0.1"
+    "@drhuy/game-base": "^1.0.1",
+    "socket.io": "^4.5.0"
   }
 }
