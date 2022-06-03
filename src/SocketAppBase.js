@@ -1,15 +1,18 @@
 const _SOCKET_KEYS = {
 	PLAYER: {
-		PROFILE: 'player.profile',
-		OTHER_PROFILE: 'player.other_profile',
+		UPDATE: 'player.update',
+		OTHER_UPDATE: 'player.other_update',
 	},
 	ROOMS: {
 		GET_PLAYERS: 'rooms.get_players',
-		GET_ROOMS: 'rooms.get_rooms'
+		GET_ROOMS: 'rooms.get_rooms',
+		ENTER: 'room.enter',
+		LEAVE: 'room.leave',
 	},
 	ROOM: {
 		GET_PLAYERS: 'room.get_players',
 		CREATE: 'room.create',
+		DESTROY: 'room.destroy',
 		ENTER: 'room.enter',
 		LEAVE: 'room.leave',
 		UPDATE: 'room.update',
@@ -33,13 +36,13 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 	self.onAfterPlayerEnter = function(_player){
 		let player = _player[0];
 
-		function _onAfterPlayerEnter(){
+		function _onPlayerUpdateInfo(){
 			if(player.roomId)
-				io.to(player.roomId).emit(SOCKET_KEYS.PLAYER.OTHER_PROFILE, player.getInfo())
-			io.to(self.id).emit(SOCKET_KEYS.PLAYER.OTHER_PROFILE, player.getInfo())
+				io.to(player.roomId).emit(SOCKET_KEYS.PLAYER.OTHER_UPDATE, player.getInfo());
+			io.to(self.id).emit(SOCKET_KEYS.PLAYER.OTHER_UPDATE, player.getInfo());
 		}
-		player.handle.onUpdateInfo.remove(_onAfterPlayerEnter);
-		player.onUpdateInfo = _onAfterPlayerEnter;
+		player.handle.onUpdateInfo.remove(_onPlayerUpdateInfo);
+		player.onUpdateInfo = _onPlayerUpdateInfo;
 		player.socketId = player._socketId;
 		player.online = true;
 
@@ -54,14 +57,21 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 				socket.emit(SOCKET_KEYS.ROOMS.GET_PLAYERS, self.getPlayers());
 			}
 		}
+		io.to(self.id).emit(SOCKET_KEYS.ROOMS.ENTER, player.getInfo())
 	}
 
 	self.onAfterPlayerLeave = function(player){
 		player = player[0];
+		
+		io.to(self.id).emit(SOCKET_KEYS.ROOMS.LEAVE, player.id)
+		
 		let socketId = player.socketId;
 		let socket = getSocketById(socketId);
-		if(socket)
+		if(socket){
 			socket.leave(self.id);
+		}
+
+		player.handle.onUpdateInfo.remove(function _onPlayerUpdateInfo(){});
 	}
 
 	self.onPlayerEntered = function(player){
@@ -76,9 +86,14 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 
 	self.onAfterAddRoom = function(_room){
 		let room = _room[0];
+
+		io.to(self.id).emit(SOCKET_KEYS.ROOM.CREATE, room.getInfo())
 		
 		room.onAfterPlayerEnter = function(player){
 			player = player[0];
+
+			io.to(room.id).emit(SOCKET_KEYS.ROOM.ENTER, player.getInfo())
+
 			let socketId = player.socketId;
 			let socket = getSocketById(socketId);
 			if(socket){
@@ -86,10 +101,6 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 				socket.leave(self.id);
 				socket.emit(SOCKET_KEYS.ROOM.GET_PLAYERS, room.getPlayers());
 			}
-		}
-
-		room.onAfterPlayerLeave = function(player){
-			io.to(room.id).emit(SOCKET_KEYS.PLAYER.OTHER_PROFILE, player[0].getInfo());
 		}
 
 		room.onUpdateInfo = function(){
@@ -100,6 +111,9 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 
 		room.onAfterPlayerLeave = function(player){
 			player = player[0];
+
+			io.to(room.id).emit(SOCKET_KEYS.ROOM.LEAVE, player.id)
+
 			let socketId = player.socketId;
 			let socket = getSocketById(socketId);
 			if(socket){
@@ -109,6 +123,12 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 				socket.emit(SOCKET_KEYS.ROOMS.GET_ROOMS, self.getRooms())
 			}
 		}
+
+	}
+
+
+	self.onAfterDestroyRoom = function(room){
+		io.to(self.id).emit(SOCKET_KEYS.ROOM.DESTROY, room[0].id)
 	}
 
 	return self;
