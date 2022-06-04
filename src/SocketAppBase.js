@@ -121,6 +121,7 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 				socket.emit(SOCKET_KEYS.ROOMS.GET_ROOMS, self.getRooms())
 			}
 		}
+		player.handle.onUpdateInfo.remove(function _onPlayerUpdateInfo(){});
 
 	}
 
