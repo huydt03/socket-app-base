@@ -70,8 +70,6 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 		if(socket){
 			socket.leave(self.id);
 		}
-
-		player.handle.onUpdateInfo.remove(function _onPlayerUpdateInfo(){});
 	}
 
 	self.onPlayerEntered = function(player){
