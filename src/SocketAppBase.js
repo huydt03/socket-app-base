@@ -37,11 +37,12 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 		let player = _player[0];
 
 		function _onPlayerUpdateInfo(){
+			if(!player.roomPanelId)
+				player.handle.onUpdateInfo.remove(_onPlayerUpdateInfo);
 			if(player.roomId)
 				io.to(player.roomId).emit(SOCKET_KEYS.PLAYER.OTHER_UPDATE, player.getInfo());
 			io.to(self.id).emit(SOCKET_KEYS.PLAYER.OTHER_UPDATE, player.getInfo());
 		}
-		player.handle.onUpdateInfo.remove(_onPlayerUpdateInfo);
 		player.onUpdateInfo = _onPlayerUpdateInfo;
 		player.socketId = player._socketId;
 		player.online = true;
@@ -121,7 +122,6 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 				socket.emit(SOCKET_KEYS.ROOMS.GET_ROOMS, self.getRooms())
 			}
 		}
-		player.handle.onUpdateInfo.remove(function _onPlayerUpdateInfo(){});
 
 	}
 
