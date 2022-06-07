@@ -4,12 +4,14 @@ const _SOCKET_KEYS = {
 		OTHER_UPDATE: 'player.other_update',
 	},
 	ROOMS: {
+		INFO: 'rooms.info',
 		GET_PLAYERS: 'rooms.get_players',
 		GET_ROOMS: 'rooms.get_rooms',
 		ENTER: 'room.enter',
 		LEAVE: 'room.leave',
 	},
 	ROOM: {
+		INFO: 'room.info',
 		GET_PLAYERS: 'room.get_players',
 		CREATE: 'room.create',
 		DESTROY: 'room.destroy',
@@ -51,6 +53,7 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 		let socket = getSocketById(socketId);
 		if(socket){
 			socket.join(self.id);
+			socket.emit(SOCKET_KEYS.ROOMS.INFO, self.info);
 			if(room = self.getRoom(player.roomId))
 				room.playerEnter(player)
 			else{
@@ -69,6 +72,7 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 		let socketId = player.socketId;
 		let socket = getSocketById(socketId);
 		if(socket){
+			socket.emit(SOCKET_KEYS.ROOMS.INFO, {});
 			socket.leave(self.id);
 		}
 	}
@@ -98,6 +102,7 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 			if(socket){
 				socket.join(room.id);
 				socket.leave(self.id);
+				socket.emit(SOCKET_KEYS.ROOM.INFO, room.getInfo());
 				socket.emit(SOCKET_KEYS.ROOM.GET_PLAYERS, room.getPlayers());
 			}
 		}
@@ -118,6 +123,7 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 			if(socket){
 				socket.join(self.id);
 				socket.leave(room.id);
+				socket.emit(SOCKET_KEYS.ROOM.INFO, []);
 				socket.emit(SOCKET_KEYS.ROOMS.GET_PLAYERS, self.getPlayers())
 				socket.emit(SOCKET_KEYS.ROOMS.GET_ROOMS, self.getRooms())
 			}
