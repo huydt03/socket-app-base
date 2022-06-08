@@ -18,6 +18,7 @@ const _SOCKET_KEYS = {
 		ENTER: 'room.enter',
 		LEAVE: 'room.leave',
 		UPDATE: 'room.update',
+		OTHER_UPDATE: 'room.other_update',
 		KICKPLAYER: 'room.kickplayer'
 	},
 	ERROR: 'error',
@@ -109,7 +110,7 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 
 		room.onUpdateInfo = function(){
 			let info = room.getInfo();
-			io.to(self.id).emit(SOCKET_KEYS.ROOM.UPDATE, info);
+			io.to(self.id).emit(SOCKET_KEYS.ROOM.OTHER_UPDATE, info);
 			io.to(room.id).emit(SOCKET_KEYS.ROOM.UPDATE, info);
 		}
 
