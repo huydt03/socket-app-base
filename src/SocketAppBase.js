@@ -75,6 +75,10 @@ function SocketAppBase(io, RoomPanel, Socket_keys) {
 
 	self.onPlayerEntered = function(player){
 		player = player[0];
+		
+		if(player.socketId == player._socketId)
+			return;
+		
 		let socketId = player.socketId;
 		let socket = getSocketById(socketId);
 		if(socket){
